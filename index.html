@@ -13,6 +13,7 @@
         </script>
         <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js">
         </script>
+        <link rel="stylesheet" href="./style.css">
 
         <script src="./main.js" defer>
         </script>
@@ -26,6 +27,12 @@
         <h1 id="title">
             良いね！悪いね！サイト
         </h1>
+
+        <div>
+        延べ訪問数：<span id="total_visit_count">0</span>回
+        </div>
+
+        <br>
 
         <!-- ボタン1 -->
         <button id="iine_button">
@@ -41,32 +48,46 @@
 
         <div class="counter">
             <div>
-                良いね！：<span id="iine_count">0</span>回
+                良いね！：<span id="iine_count">0</span>
             </div>
             <div>
-                悪いね！：<span id="waruine_count">0</span>回
+                悪いね！：<span id="waruine_count">0</span>
+            </div>
+            <div>
+                良し悪し：<span id="yosiasi_count">0</span>
             </div>
         </div>
 
         <br>
 
         <!-- 計算 -->
-        <input type="text" id="num1">+<input type="text" id="num2">
-
-        <button id="calc_button">
-            計算
-        </button>
+        <input type="text" id="num1">
 
         <br>
 
         結果：<span id="result">0</span>
+
+        <div>
+            <h3>今日の運勢</h3>
+            <button id="omikuji_button">
+                おみくじを引く
+            </button>
+            <p>
+                結果：<span id ="omikuji_result">???</span>
+            </p>
+        </div>
+
+        <!-- チンチロ -->
+        <h3>チンチロ</h3>
+        <button id="chinchiro_button">サイコロを振る</button>
+        <p id="chinchiro_result">ここにサイコロの結果が出るよ</p>
 
         <footer style="margin-top: 40px; border-top: 1px solid #ccc; padding-top: 10px; font-size: 0.9em; color: #666;">
             <p>
                 Created by わめ & 赤い人
             </p>
             <p>
-                制作時間：5時間（2026/08/29 4:00現在）
+                制作時間：8時間（2026/08/29 8:00現在）
             </p>
 
 

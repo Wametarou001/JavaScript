@@ -1,0 +1,13 @@
+@charset "utf-8";
+
+body
+{
+    margin: 0;
+    padding: 0;
+}
+
+/* 大凶 */
+body.daikyo {
+    background-color: #ff0000;
+    filter: invert(1);
+}
