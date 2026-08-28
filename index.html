@@ -3,6 +3,8 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <!-- mathjsライブラリ -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/15.1.0/math.js">
         </script>
 
@@ -22,7 +24,7 @@
     <body>
         <!-- メモ -->
         <h1 id="title">
-            あああ
+            良いね！悪いね！サイト
         </h1>
 
         <!-- ボタン1 -->
@@ -35,34 +37,28 @@
             悪いね！
         </button>
 
+        <br>
+
+        <div class="counter">
+            <div>
+                良いね！：<span id="iine_count">0</span>回
+            </div>
+            <div>
+                悪いね！：<span id="waruine_count">0</span>回
+            </div>
+        </div>
+
+        <br>
+
         <!-- 計算 -->
-        <input type="text" id="num1">
-        +
-        <input type="text" id="num2">
+        <input type="text" id="num1">+<input type="text" id="num2">
+
         <button id="calc_button">
             計算
         </button>
-        <p>
-            結果：
-            <span id="result">
-                0
-            </span>
-        </p>
-        <div class="counter">
-            <div>
-                良いね！：
-                <span id="iine_count">
-                    0
-                </span>
-                回
-            </div>
-            <div>
-                悪いね！：
-                <span id="waruine_count">
-                    0
-                </span>
-                回
-            </div>
-        </div>
+
+        <br>
+
+        結果：<span id="result">0</span>
     </body>
 </html>
