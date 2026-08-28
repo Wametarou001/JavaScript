@@ -122,7 +122,7 @@ waruine_button.addEventListener("click", () =>
         const daikyoProbability = 0.1;
         if (Math.random() < daikyoProbability)
         {
-            applyDaikyo("大凶！！！");
+            applyDaikyo("大凶！！！！！");
             alert("悪いね！！！！！！！大凶！！！！！");
             return;
         }
