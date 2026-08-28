@@ -3,8 +3,17 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/15.1.0/math.js"></script>
-        <script src="main.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/15.1.0/math.js">
+        </script>
+
+        <!-- Firebaseライブラリ -->
+        <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js">
+        </script>
+        <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js">
+        </script>
+
+        <script src="main.js" defer>
+        </script>
 
         <title>
             Document
@@ -17,12 +26,12 @@
         </h1>
 
         <!-- ボタン1 -->
-        <button id="button_1">
+        <button id="iine_button">
             良いね！
         </button>
 
         <!-- ボタン2 -->
-        <button id="button_2">
+        <button id="waruine_button">
             悪いね！
         </button>
 
@@ -39,5 +48,21 @@
                 0
             </span>
         </p>
+        <div class="counter">
+            <div>
+                良いね！：
+                <span id="iine_count">
+                    0
+                </span>
+                回
+            </div>
+            <div>
+                悪いね！：
+                <span id="waruine_count">
+                    0
+                </span>
+                回
+            </div>
+        </div>
     </body>
 </html>
