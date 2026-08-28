@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="main.js" defer>
+        </script>
+
+        <title>
+            Document
+        </title>
+    </head>
+    <body>
+        <!-- メモ -->
+        <h1 id="title">
+            あああ
+        </h1>
+
+        <!-- ボタン1 -->
+        <button id="button_1">
+            良いね！
+        </button>
+
+        <!-- ボタン2 -->
+        <button id="button_2">
+            悪いね！
+        </button>
+        <script>
+            // 処理
+            const button_1 = document.getElementById('button_1');
+
+            button_1.addEventListener('click', () =>
+            {
+                alert('良いね！');
+            })
+        </script>
+    </body>
+</html>
