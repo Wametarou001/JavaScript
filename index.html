@@ -3,8 +3,8 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script src="main.js" defer></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/15.1.0/math.js"></script>
+        <script src="main.js" defer></script>
 
         <title>
             Document
@@ -39,30 +39,5 @@
                 0
             </span>
         </p>
-        <script>
-            // 処理
-            const button_1 = document.getElementById('button_1');
-
-            button_1.addEventListener('click', () =>
-            {
-                alert('良いね！');
-            })
-
-            // 計算処理
-            const calcButton = document.getElementById('calc_button');
-
-            calcButton.addEventListener('click', () =>
-            {
-                const a = document.getElementById('num1').value;
-                const b = document.getElementById('num2').value;
-
-                const valA = a ? math.evaluate(a) : 0;
-                const valB = b ? math.evaluate(b) : 0;
-
-                const result = valA + valB;
-
-                document.getElementById('result').textContent = result;
-            })
-        </script>
     </body>
 </html>
