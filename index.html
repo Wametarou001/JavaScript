@@ -15,7 +15,7 @@
         </script>
         <link rel="stylesheet" href="./style.css">
 
-        <script src="./main.js" defer>
+        <script type="module" src="JavaScript/main/main.js">
         </script>
 
         <title>
@@ -23,13 +23,32 @@
         </title>
     </head>
     <body>
+        <!-- ヘッダー -->
+        <header>
+            <h1>
+                良いね悪いねサイト
+            </h1>
+            <nav>
+                <a href="index.html">
+                    <button>
+                        1
+                    </button>
+                </a>
+                <a href="nextPage/next.html">
+                    <button>
+                        2
+                    </button>
+                </a>
+            </nav>
+        </header>
+
         <!-- メモ -->
         <h1 id="title">
             良いね！悪いね！サイト
         </h1>
 
         <div>
-        延べ訪問数：<span id="total_visit_count">0</span>回
+            延べ訪問数：<span id="total_visit_count">0</span>回
         </div>
 
         <br>
@@ -68,26 +87,50 @@
         結果：<span id="result">0</span>
 
         <div>
-            <h3>今日の運勢</h3>
+            <h2>
+                今日の運勢
+            </h2>
             <button id="omikuji_button">
                 おみくじを引く
             </button>
             <p>
                 結果：<span id ="omikuji_result">???</span>
             </p>
+            合計<span id="user_points">0</span>pt
         </div>
 
         <!-- チンチロ -->
-        <h3>チンチロ</h3>
-        <button id="chinchiro_button">サイコロを振る</button>
-        <p id="chinchiro_result">ここにサイコロの結果が出るよ</p>
+        <h2>
+            チンチロ
+        </h2>
+        <button id="chinchiro_button">
+            サイコロを振る
+        </button>
+        <p id="chinchiro_result">
+            ここにサイコロの結果が出るよ
+        </p>
+
+        <!-- 1D100 -->
+        <h2>
+            なんでも1D100
+        </h2>
+        <input type="text" id="dice_input" value="1d100" placeholder="例: 1d100, 1d6+3">
+        <button id="1d100_button">
+            ダイスを振る
+        </button>
+        <span id="1d100_result">
+        </span>
+
+        <button id="next_button">
+            次のページ
+        </button>
 
         <footer style="margin-top: 40px; border-top: 1px solid #ccc; padding-top: 10px; font-size: 0.9em; color: #666;">
             <p>
                 Created by わめ & 赤い人
             </p>
             <p>
-                制作時間：8時間（2026/08/29 8:00現在）
+                制作時間：11時間（2026/09/01 20:00更新）
             </p>
 
 
