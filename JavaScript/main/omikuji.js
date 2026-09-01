@@ -6,10 +6,10 @@ const pointDisplay = document.getElementById("user_points");
 const fortunePoints = {
     "大吉！！！！！": 100,
     "吉！！！": 50,
-    "中吉！！": 30,
+    "中吉！！": 25,
     "小吉！": 10,
-    "末吉！！": 5,
-    "凶！！！": 0,
+    "末吉！！": 0,
+    "凶！！！": -10,
     "大凶！！！！！": -50
 };
 
@@ -94,12 +94,12 @@ export function initOmikuji() {
     });
 
     // デバッグ用
-    window.mySiteDebug = {
+    window.iineWaruineSiteDebug = {
     resetOmikuji: function()
         {
             localStorage.removeItem("last_omikuji_date");
             localStorage.removeItem("last_omikuji_result");
-            console.log("おみくじの制限をリセットしました！ページを再読み込みしてください。");
+            console.log("おみくじの制限をリセットしました。ページを再読み込みしてください。");
         }
     };
 }
