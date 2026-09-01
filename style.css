@@ -26,6 +26,12 @@ nav
     display: flex;
 }
 
+.site_name
+{
+    color: inherit;
+    text-decoration: none;
+}
+
 /* 大凶 */
 body.daikyo
 {

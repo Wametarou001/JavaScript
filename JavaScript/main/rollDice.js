@@ -12,7 +12,7 @@ export function initRollDice()
 
             if (!expr)
             {
-                expr = "1d100"; // 空欄の場合1D100
+                expr = "0"; // 空欄の場合0
             }
 
             expr = expr.replace(/(\d+)d(\d+)/gi, (match, count, sides) =>
