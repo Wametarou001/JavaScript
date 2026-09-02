@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // どのページから呼ばれても components は2つ上にある
-    const basePath = '../../components/';
+    // ★ ルート階層から見た components フォルダを指定する
+    const basePath = './components/';
 
     // ヘッダーの読み込み
     fetch(basePath + 'header.html')
@@ -13,7 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (headerContainer) {
                 headerContainer.innerHTML = data;
 
-                // リンク先の自動調整（すべてルート階層なので "./" でOK）
                 const homeLinks = headerContainer.querySelectorAll('[data-link="home"]');
                 const nextLinks = headerContainer.querySelectorAll('[data-link="next"]');
 
