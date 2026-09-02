@@ -15,6 +15,9 @@
         </script>
         <link rel="stylesheet" href="./style.css">
 
+        <script src="JavaScript/common/common.js">
+        </script>
+
         <script type="module" src="JavaScript/main/main.js">
         </script>
 
@@ -24,30 +27,8 @@
     </head>
     <body>
         <!-- ヘッダー -->
-        <header>
-            <a href="/index.html" class="site_name">
-                <h1>
-                    良いね悪いねサイト
-                </h1>
-            </a>
-            <nav>
-                <a href="/index.html">
-                    <button>
-                        1
-                    </button>
-                </a>
-                <a href="/nextPage/next.html">
-                    <button>
-                        2
-                    </button>
-                </a>
-            </nav>
-        </header>
-
-        <!-- メモ -->
-        <h1 id="title">
-            良いね！悪いね！サイト
-        </h1>
+        <div id="header_container">
+        </div>
 
         <div>
             延べ訪問数：<span id="total_visit_count">0</span>回
@@ -95,6 +76,8 @@
             <button id="omikuji_button">
                 おみくじを引く
             </button>
+            <button id ="reset_daikyo_button" style="display: none;">見た目を元に戻す
+            </button>
             <p>
                 結果：<span id ="omikuji_result">???</span>
             </p>
@@ -105,12 +88,16 @@
         <h2>
             チンチロ
         </h2>
+        <input type="text" id="chinchiro_bet" placeholder="賭けるポイント数">
         <button id="chinchiro_button">
             サイコロを振る
         </button>
-        <p id="chinchiro_result">
+        <div id="chinchiro_result">
             ここにサイコロの結果が出るよ
-        </p>
+        </div>
+        <div id="chinchiro_point_change">
+            変動pt：なし
+        </div>
 
         <!-- 1D100 -->
         <h2>
@@ -127,15 +114,8 @@
             次のページ
         </button>
 
-        <footer style="margin-top: 40px; border-top: 1px solid #ccc; padding-top: 10px; font-size: 0.9em; color: #666;">
-            <p>
-                Created by わめ & 赤い人
-            </p>
-            <p>
-                制作時間：11時間（2026/09/01 20:00更新）
-            </p>
-
-
-        </footer>
+        <!-- フッター -->
+        <div id="footer-container">
+        </div>
     </body>
 </html>

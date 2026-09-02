@@ -10,6 +10,8 @@ body
 {
     margin: 0;
     padding: 0;
+    color: #ffffff;
+    background-color: #202020;
 }
 
 header
@@ -37,4 +39,11 @@ body.daikyo
 {
     background-color: #ff0000;
     filter: invert(1);
+}
+
+/* 大凶の見た目をリセット */
+body.resetDaikyo
+{
+    background-color: #202020;
+    filter: invert(0);
 }

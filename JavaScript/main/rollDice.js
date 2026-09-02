@@ -6,36 +6,42 @@ export function initRollDice()
 
     if (rollButton)
     {
-        rollButton.addEventListener('click', () =>
-        {
-            let expr = diceInput.value.trim();
-
-            if (!expr)
+        rollButton.addEventListener
+        (
+            'click', () =>
             {
-                expr = "0"; // 空欄の場合0
-            }
+                let expr = diceInput.value.trim();
 
-            expr = expr.replace(/(\d+)d(\d+)/gi, (match, count, sides) =>
-            {
-                let sum = 0;
-                const n = parseInt(count);
-                const s = parseInt(sides);
-                for (let i = 0; i < n; i++)
+                if (!expr)
                 {
-                    sum += Math.floor(Math.random() * s) + 1;
+                    expr = "0"; // 空欄の場合0
                 }
-                return sum;
-            });
 
-            try
-            {
-                const result = math.evaluate(expr);
-                rollResult.textContent = `${result} (式：${diceInput.value})`;
+                expr = expr.replace
+                (
+                    /(\d+)d(\d+)/gi, (match, count, sides) =>
+                    {
+                        let sum = 0;
+                        const n = parseInt(count);
+                        const s = parseInt(sides);
+                        for (let i = 0; i < n; i++)
+                        {
+                            sum += Math.floor(Math.random() * s) + 1;
+                        }
+                        return sum;
+                    }
+                );
+
+                try
+                {
+                    const result = math.evaluate(expr);
+                    rollResult.textContent = `${result} (式：${diceInput.value})`;
+                }
+                catch (error)
+                {
+                    rollResult.textContent = "エラー";
+                }
             }
-            catch (error)
-            {
-                rollResult.textContent = "エラー";
-            }
-        });
+        );
     }
 }
