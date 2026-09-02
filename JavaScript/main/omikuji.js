@@ -5,7 +5,7 @@ const resetDaikyoButton = document.getElementById("reset_daikyo_button");
 
 const fortunePoints =
 {
-    "大吉！！！！！": 36,
+    "大吉！！！！！": 32,
     "吉！！！": 16,
     "中吉！！": 8,
     "小吉！": 4,
