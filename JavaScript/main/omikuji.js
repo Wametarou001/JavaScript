@@ -1,3 +1,7 @@
+import { db, auth } from "../common/firebase.js";
+import { ref, get, update } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-database.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
+
 const omikujiButton = document.getElementById("omikuji_button");
 const omikujiResult = document.getElementById("omikuji_result");
 const pointDisplay = document.getElementById("user_points");
@@ -10,40 +14,102 @@ const fortunePoints =
     "中吉！！": 8,
     "小吉！": 4,
     "末吉！！": 2,
-    "凶！！！":1,
+    "凶！！！": 1,
     "大凶！！！！！": 0,
 };
 
-// 画面読み込み時に現在のポイントを画面に反映する関数
-function updatePointDisplay()
+let currentUserUid = null;
+
+// ログイン状態の監視
+onAuthStateChanged(auth, async (user) =>
+{
+    if (user)
+    {
+        currentUserUid = user.uid;
+        // ログインしたらFirebaseからデータを読み込んで画面に反映
+        await loadUserData();
+    }
+    else
+    {
+        currentUserUid = null;
+        // 未ログインならlocalStorageから読み込む
+        updatePointDisplayLocal();
+        checkLocalOmikujiState();
+    }
+});
+
+// Firebaseからデータを読み込む関数
+async function loadUserData() {
+    if (!currentUserUid) return;
+
+    const userRef = ref(db, "users/" + currentUserUid);
+    const snapshot = await get(userRef);
+
+    if (snapshot.exists()) {
+        const data = snapshot.val();
+        if (pointDisplay) {
+            pointDisplay.textContent = data.points || 0;
+        }
+
+        const todayStr = new Date().toISOString().split('T')[0];
+        if (data.last_omikuji_date === todayStr && data.last_omikuji_result) {
+            omikujiResult.textContent = data.last_omikuji_result;
+            if (data.last_omikuji_result.includes("大凶")) {
+                applyDaikyo(data.last_omikuji_result, false); // ローカル保存はスキップ
+            }
+        }
+    } else {
+        if (pointDisplay) pointDisplay.textContent = "0";
+    }
+}
+
+// ローカルのポイント表示を更新
+function updatePointDisplayLocal()
 {
     if (!pointDisplay) return;
     const currentPoints = Number(localStorage.getItem("user_points")) || 0;
     pointDisplay.textContent = currentPoints;
 }
 
+// ローカルの今日の結果をチェック
+function checkLocalOmikujiState()
+{
+    const todayStr = new Date().toISOString().split('T')[0];
+    const savedDate = localStorage.getItem("last_omikuji_date");
+    const savedResult = localStorage.getItem("last_omikuji_result");
+
+    if (savedDate === todayStr && savedResult)
+    {
+        omikujiResult.textContent = savedResult;
+        if (savedResult.includes("大凶"))
+        {
+            applyDaikyo(savedResult, true);
+        }
+    }
+}
+
 // --- 大凶で反転を適用するメソッド ---
-export function applyDaikyo(resultText)
+export function applyDaikyo(resultText, saveToLocal = true)
 {
     if (omikujiResult)
     {
         omikujiResult.textContent = resultText;
     }
-    // リセット用クラスを外し、大凶クラスを付与
     document.documentElement.classList.remove("resetDaikyo");
     document.body.classList.remove("resetDaikyo");
     document.documentElement.classList.add("daikyo");
     document.body.classList.add("daikyo");
 
-    // 大凶のときだけボタンを表示する
     if (resetDaikyoButton)
     {
         resetDaikyoButton.style.display = "block";
     }
 
-    const today = new Date().toISOString().split('T')[0];
-    localStorage.setItem("last_omikuji_date", today);
-    localStorage.setItem("last_omikuji_result", resultText);
+    if (saveToLocal) {
+        const today = new Date().toISOString().split('T')[0];
+        localStorage.setItem("last_omikuji_date", today);
+        localStorage.setItem("last_omikuji_result", resultText);
+    }
 }
 
 // --- 通常状態に戻すメソッド ---
@@ -51,11 +117,9 @@ function clearDaikyo()
 {
     document.documentElement.classList.remove("daikyo");
     document.body.classList.remove("daikyo");
-    // 大凶の見た目をリセットするクラスを付与
     document.documentElement.classList.add("resetDaikyo");
     document.body.classList.add("resetDaikyo");
 
-    // リセットしたらボタンを隠す
     if (resetDaikyoButton)
     {
         resetDaikyoButton.style.display = "none";
@@ -66,91 +130,87 @@ export function initOmikuji()
 {
     if (!omikujiButton || !omikujiResult) return;
 
-    // 起動時にポイント表示を更新
-    updatePointDisplay();
-
-    // 見た目をリセットするボタンが押されたときの処理
     if (resetDaikyoButton)
     {
-        resetDaikyoButton.addEventListener
-        ("click", () =>
+        resetDaikyoButton.addEventListener("click", () =>
             {
                 clearDaikyo();
             }
         );
     }
 
-    const todayStr = new Date().toISOString().split('T')[0];
-    const savedDate = localStorage.getItem("last_omikuji_date");
-    const savedResult = localStorage.getItem("last_omikuji_result");
-
-    if (savedDate === todayStr && savedResult)
+    omikujiButton.addEventListener("click", async () =>
     {
-        omikujiResult.textContent = savedResult;
+        const today = new Date().toISOString().split('T')[0];
+        const fortunes = Object.keys(fortunePoints);
+        const randomIndex = Math.floor(Math.random() * fortunes.length);
+        const result = fortunes[randomIndex];
+        const earnedPoints = fortunePoints[result];
 
-        if (savedResult.includes("大凶"))
+        let newPoints = 0;
+
+        // ログインしている場合：Firebaseに保存
+        if (currentUserUid)
         {
-            document.documentElement.classList.remove("resetDaikyo");
-            document.body.classList.remove("resetDaikyo");
-            document.documentElement.classList.add("daikyo");
-            document.body.classList.add("daikyo");
+            const userRef = ref(db, "users/" + currentUserUid);
+            const snapshot = await get(userRef);
+            const userData = snapshot.exists() ? snapshot.val() : {};
 
-            //リロード時にも大凶ならボタンを表示
-            if (resetDaikyoButton)
+            if (userData.last_omikuji_date === today)
             {
-                resetDaikyoButton.style.display = "block";
+                alert("おみくじは一日一回まで！また明日引いてね！");
+                return;
             }
+
+            const currentPoints = Number(userData.points) || 0;
+            newPoints = currentPoints + earnedPoints;
+
+            // 既存データを保持しておみくじ結果だけ更新
+            await update(userRef, {
+                points: newPoints,
+                last_omikuji_date: today,
+                last_omikuji_result: result
+            });
         }
-    }
-
-    omikujiButton.addEventListener
-    (
-        "click", () =>
+        // 未ログインの場合：localStorageに保存
+        else
         {
-            const today = new Date().toISOString().split('T')[0];
             const lastDrawnDate = localStorage.getItem("last_omikuji_date");
-
             if (lastDrawnDate === today)
             {
                 alert("おみくじは一日一回まで！また明日引いてね！");
                 return;
             }
 
-            const fortunes = Object.keys(fortunePoints);
-            const randomIndex = Math.floor(Math.random() * fortunes.length);
-            const result = fortunes[randomIndex];
-            const earnedPoints = fortunePoints[result];
-
-            // localStorageから現在のポイントを読み込んで加算し、保存する
             const currentPoints = Number(localStorage.getItem("user_points")) || 0;
-            const newPoints = currentPoints + earnedPoints;
+            newPoints = currentPoints + earnedPoints;
             localStorage.setItem("user_points", newPoints);
-
-            // 画面の表示を更新
-            updatePointDisplay();
-
-            if (result.includes("大凶"))
-            {
-                applyDaikyo(result);
-            }
-            else
-            {
-                omikujiResult.textContent = result;
-
-                document.documentElement.classList.remove("daikyo");
-                document.body.classList.remove("daikyo");
-                document.documentElement.classList.add("resetDaikyo");
-                document.body.classList.add("resetDaikyo");
-                if (resetDaikyoButton)
-                {
-                    resetDaikyoButton.style.display = "none";
-                }
-
-                localStorage.setItem("last_omikuji_date", today);
-                localStorage.setItem("last_omikuji_result", result);
-            }
-
-            alert(`${result} +${earnedPoints}pt （合計: ${newPoints}pt）`);
+            localStorage.setItem("last_omikuji_date", today);
+            localStorage.setItem("last_omikuji_result", result);
         }
-    );
+
+        // 画面の表示を更新
+        if (pointDisplay) {
+            pointDisplay.textContent = newPoints;
+        }
+
+        if (result.includes("大凶"))
+        {
+            applyDaikyo(result, !currentUserUid);
+        }
+        else
+        {
+            omikujiResult.textContent = result;
+            document.documentElement.classList.remove("daikyo");
+            document.body.classList.remove("daikyo");
+            document.documentElement.classList.add("resetDaikyo");
+            document.body.classList.add("resetDaikyo");
+            if (resetDaikyoButton)
+            {
+                resetDaikyoButton.style.display = "none";
+            }
+        }
+
+        alert(`${result} +${earnedPoints}pt （合計: ${newPoints}pt）`);
+    });
 }

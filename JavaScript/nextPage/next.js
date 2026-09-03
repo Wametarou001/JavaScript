@@ -1,21 +1,90 @@
+import { db, auth } from "../common/firebase.js";
+import { ref, get, update, set } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-database.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
 
 const mainPageButton = document.getElementById('main_button');
 
-mainPageButton.addEventListener
-(
-    'click', () =>
-    {
-        window.location.href = './index.html';
-    }
-);
+if (mainPageButton)
+{
+    mainPageButton.addEventListener
+    (
+        'click', () =>
+        {
+            window.location.href = './index.html';
+        }
+    );
+}
 
-// シリアルコード認証
+// シリアルコードの定義
 const serialCodes =
 {
     "超良いね！": 1000,
 };
 
-function SerialCodeSystem(code)
+let currentUserUid = null;
+
+// ログイン状態の監視
+onAuthStateChanged(auth, async (user) =>
+{
+    if (user)
+    {
+        currentUserUid = user.uid;
+        await updatePointDisplay();
+    }
+    else
+    {
+        currentUserUid = null;
+        updatePointDisplay();
+    }
+});
+
+// 現在のポイントを取得する関数
+async function getCurrentPoints()
+{
+    if (currentUserUid)
+    {
+        const userRef = ref(db, "users/" + currentUserUid);
+        const snapshot = await get(userRef);
+        if (snapshot.exists())
+        {
+            return Number(snapshot.val().points) || 0;
+        }
+        return 0;
+    }
+    else
+    {
+        return Number(localStorage.getItem("user_points")) || 0;
+    }
+}
+
+// ポイントを保存する関数
+async function saveNewPoints(newPoints)
+{
+    if (currentUserUid)
+    {
+        const userRef = ref(db, "users/" + currentUserUid);
+
+        await update(userRef, {
+            points: newPoints
+        });
+    }
+    else
+    {
+        localStorage.setItem("user_points", newPoints);
+    }
+}
+
+// 画面のポイント表示を更新する関数
+async function updatePointDisplay()
+{
+    const pointDisplay = document.getElementById("user_points");
+    if (!pointDisplay) return;
+    const currentPoints = await getCurrentPoints();
+    pointDisplay.textContent = currentPoints;
+}
+
+// シリアルコードの処理
+async function SerialCodeSystem(code)
 {
     const trimmedCode = code.trim();
 
@@ -25,28 +94,50 @@ function SerialCodeSystem(code)
         return;
     }
 
-    // 使用済みコードを保存
-    const storageKey = `used_code_${trimmedCode}`;
-    if (localStorage.getItem(storageKey) === "true")
+    const rewardAmount = serialCodes[trimmedCode];
+    // ログイン中の場合：Firebaseで既に使用済みかチェック
+    if (currentUserUid)
     {
-        alert("このシリアルコードはすでに使用済みです。");
-        return;
+        const userRef = ref(db, "users/" + currentUserUid);
+        const snapshot = await get(userRef);
+        const userData = snapshot.exists() ? snapshot.val() : {};
+        const usedCodes = userData.used_codes || {};
+
+        if (usedCodes[trimmedCode] === true)
+        {
+            alert("このシリアルコードはすでに使用済みです。");
+            return;
+        }
+
+        // 使用済みフラグを立ててポイントを加算
+        usedCodes[trimmedCode] = true;
+        const currentPoints = Number(userData.points) || 0;
+        const newPoints = currentPoints + rewardAmount;
+
+        await update(userRef,
+            {
+            points: newPoints,
+            [`used_codes/${trimmedCode}`]: true
+            });
+    }
+    // 未ログインの場合：localStorageで既に使用済みかチェック＆保存
+    else
+    {
+        const storageKey = `used_code_${trimmedCode}`;
+        if (localStorage.getItem(storageKey) === "true")
+        {
+            alert("このシリアルコードはすでに使用済みです。");
+            return;
+        }
+
+        const currentPoints = Number(localStorage.getItem("user_points")) || 0;
+        const newPoints = currentPoints + rewardAmount;
+
+        localStorage.setItem("user_points", newPoints);
+        localStorage.setItem(storageKey, "true");
     }
 
-    const reward = serialCodes[trimmedCode];
-    const rewardAmount = typeof reward === 'string' ? math.evaluate(reward) : reward;
-
-    const currentPoints = Number(localStorage.getItem("user_points")) || 0; // 現在のポイント数
-    const newPoints = currentPoints + rewardAmount;
-
-    localStorage.setItem("user_points", newPoints);
-    localStorage.setItem(storageKey, "true");
-
-    if (typeof updatePointDisplay === 'function')
-    {
-        updatePointDisplay();
-    }
-
+    await updatePointDisplay();
     alert(`シリアルコードを入力しました。 ${rewardAmount}pt を獲得しました。`);
 }
 
@@ -55,9 +146,9 @@ const serialButton = document.getElementById("serial_button");
 
 if (serialButton && serialInput)
 {
-    serialButton.addEventListener("click", () =>
+    serialButton.addEventListener("click", async () =>
     {
-        SerialCodeSystem(serialInput.value);
+        await SerialCodeSystem(serialInput.value);
         serialInput.value = "";
     });
 }
@@ -67,14 +158,30 @@ window.iineWaruineSiteDebug =
 {
     serialCode:
     {
-        reset: function(code)
+        reset: async function(code)
         {
             if (code)
             {
-                localStorage.removeItem(`used_code_${code}`);
+                if (currentUserUid)
+                {
+                    const userRef = ref(db, "users/" + currentUserUid);
+                    const snapshot = await get(userRef);
+                    if (snapshot.exists())
+                    {
+                        const userData = snapshot.val();
+                        if (userData.used_codes)
+                        {
+                            delete userData.used_codes[code];
+                            await set(userRef, userData);
+                        }
+                    }
+                }
+                else
+                {
+                    localStorage.removeItem(`used_code_${code}`);
+                }
                 console.log(`シリアルコード "${code}" の使用制限をリセットしました。`);
             }
         }
     }
 }
-

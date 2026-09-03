@@ -1,13 +1,70 @@
+import { db, auth } from "../common/firebase.js";
+import { ref, get, update } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-database.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
+
 const chinchiroButton = document.getElementById("chinchiro_button");
 const chinchiroResult = document.getElementById("chinchiro_result");
 const chinchiroPointChange = document.getElementById("chinchiro_point_change");
 const chinchiroBetInput = document.getElementById("chinchiro_bet");
 const pointDisplay = document.getElementById("user_points");
 
-function updatePointDisplay()
+let currentUserUid = null;
+
+// ログイン状態を監視してUIDを保持する
+onAuthStateChanged(auth, async (user) =>
 {
-    if(!pointDisplay) return;
-    const currentPoints = Number(localStorage.getItem("user_points")) || 0;
+    if (user)
+    {
+        currentUserUid = user.uid;
+        await updatePointDisplay();
+    }
+    else
+    {
+        currentUserUid = null;
+        updatePointDisplay();
+    }
+});
+
+// 現在のポイントを取得する関数(ログインしていない場合LocalStrageを参照)
+async function getCurrentPoints()
+{
+    if (currentUserUid)
+    {
+        const userRef = ref(db, "users/" + currentUserUid);
+        const snapshot = await get(userRef);
+        if (snapshot.exists())
+        {
+            return Number(snapshot.val().points) || 0;
+        }
+        return 0;
+    }
+    else
+    {
+        return Number(localStorage.getItem("user_points")) || 0;
+    }
+}
+
+// ポイントを保存する関数（FirebaseまたはlocalStorage）
+async function saveNewPoints(newPoints)
+{
+    if (currentUserUid)
+    {
+        const userRef = ref(db, "users/" + currentUserUid);
+        await update(userRef, {
+            points: newPoints
+        });
+    }
+    else
+    {
+        localStorage.setItem("user_points", newPoints);
+    }
+}
+
+// 画面のポイント表示を更新する関数
+async function updatePointDisplay()
+{
+    if (!pointDisplay) return;
+    const currentPoints = await getCurrentPoints();
     pointDisplay.textContent = currentPoints;
 }
 
@@ -22,11 +79,11 @@ export function initChinChiro()
     {
         chinchiroButton.addEventListener
         (
-            "click", () =>
+            "click", async () =>
             {
-                const currentPoints = Number(localStorage.getItem("user_points")) || 0;
+                const currentPoints = await getCurrentPoints();
 
-                // 追加：新規ゲームの開始（または1回目が終わった後）の判定
+                // 新規ゲームの開始（または1回目が終わった後）の判定
                 if (currentRollCount === 0)
                 {
                     const betInputVal = chinchiroBetInput.value.trim();
@@ -58,7 +115,7 @@ export function initChinChiro()
 
                 let resultText = "";
                 let pointChange = 0;
-                let isFinished = false; // 今回のクリックでゲームが終了するかどうか
+                let isFinished = false;
 
                 // 掛け金が0または未入力の場合は、常に1回目で強制終了
                 if (currentBetAmount === 0)
@@ -127,17 +184,14 @@ export function initChinChiro()
                     }
                     else
                     {
-                        // 目なしの場合
                         if (currentRollCount >= maxRolls)
                         {
-                            // 3回目も目なしだった場合
                             resultText = `${currentRollCount}回目 目無し【1倍払い】`;
                             pointChange = -currentBetAmount;
                             isFinished = true;
                         }
                         else
                         {
-                            // 1回目または2回目で目なしだった場合
                             resultText = `${currentRollCount}回目 目無し`;
                             pointChange = 0;
                             isFinished = false;
@@ -149,17 +203,10 @@ export function initChinChiro()
                 if (isFinished)
                 {
                     const newPoints = currentPoints + pointChange;
-                    localStorage.setItem("user_points", newPoints);
-                    updatePointDisplay();
+                    await saveNewPoints(newPoints);
+                    await updatePointDisplay();
 
-                    if (currentBetAmount === 0 || currentRollCount === 1)
-                    {
-                        chinchiroResult.textContent = `サイコロ: [ ${rawdice.join(", ")} ] → ${resultText}`;
-                    }
-                    else
-                    {
-                        chinchiroResult.textContent = `サイコロ: [ ${rawdice.join(", ")} ] → ${resultText}`;
-                    }
+                    chinchiroResult.textContent = `サイコロ: [ ${rawdice.join(", ")} ] → ${resultText}`;
 
                     if (currentBetAmount === 0)
                     {
@@ -170,12 +217,10 @@ export function initChinChiro()
                         chinchiroPointChange.textContent = `変動pt：${pointChange >= 0 ? '+' : ''}${pointChange}pt`;
                     }
 
-                    // ゲーム終了なので回数をリセットして次回のボタンクリックに備える
                     currentRollCount = 0;
                 }
                 else
                 {
-                    // まだ振り直せる（目なしで2回目・3回目を迎える）場合
                     chinchiroResult.textContent = `サイコロ: [ ${rawdice.join(", ")} ] → ${resultText} (振り直し)`;
                     chinchiroPointChange.textContent = "変動pt：計算中...";
                 }

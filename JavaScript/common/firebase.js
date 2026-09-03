@@ -1,5 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js"; // FireBaseの基本機能
 import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js"; // ログイン機能
+import { getDatabase } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-database.js";
 
 // Firebaseの設定情報(いじらないで)
 const firebaseConfig =
@@ -16,6 +17,14 @@ const firebaseConfig =
 // 初期化
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getDatabase(app);
+
+setPersistence(auth, browserLocalPersistence)
+    .catch((error) =>
+    {
+        console.error("設定エラー:", error);
+    });
+
 const provider = new GoogleAuthProvider();
 
 /** Googleのログイン認証を実行する関数 */
@@ -79,3 +88,4 @@ onAuthStateChanged(auth, (user) =>
 });
 
 window.loginWithGoogle = loginWithGoogle;
+export { db, auth };
