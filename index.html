@@ -17,6 +17,7 @@
 
         <script src="JavaScript/common/common.js">
         </script>
+        <script type="module" src="./JavaScript/common/firebase.js"></script>
 
         <script type="module" src="JavaScript/main/main.js">
         </script>
@@ -30,89 +31,95 @@
         <div id="header_container">
         </div>
 
-        <div>
-            延べ訪問数：<span id="total_visit_count">0</span>回
-        </div>
+        <main>
+            <div>
+                延べ訪問数：<span id="total_visit_count">0</span>回
+            </div>
 
-        <br>
+            <br>
 
-        <!-- ボタン1 -->
-        <button id="iine_button">
+            <!-- ボタン1 -->
+            <button id="iine_button">
             良いね！
-        </button>
+            </button>
 
-        <!-- ボタン2 -->
-        <button id="waruine_button">
-            悪いね！
-        </button>
+            <!-- ボタン2 -->
+            <button id="waruine_button">
+                悪いね！
+            </button>
 
-        <br>
+            <br>
 
-        <div class="counter">
-            <div>
-                良いね！：<span id="iine_count">0</span>
+            <div class="counter">
+                <div>
+                    良いね！：<span id="iine_count">0</span>
+                </div>
+                <div>
+                    悪いね！：<span id="waruine_count">0</span>
+                </div>
+                <div>
+                    良し悪し：<span id="yosiasi_count">0</span>
+                </div>
             </div>
+
+            <br>
+
+            <!-- 計算 -->
+            <input type="text" id="num1">
+
+            <br>
+
+            結果：<span id="result">0</span>
+
             <div>
-                悪いね！：<span id="waruine_count">0</span>
+                <h2>
+                    今日の運勢
+                </h2>
+                <button id="omikuji_button">
+                    おみくじを引く
+                </button>
+                <button id ="reset_daikyo_button" style="display: none;">見た目を元に戻す
+                </button>
+                <p>
+                    結果：<span id ="omikuji_result">???</span>
+                </p>
+                合計<span id="user_points">0</span>pt
             </div>
-            <div>
-                良し悪し：<span id="yosiasi_count">0</span>
-            </div>
-        </div>
 
-        <br>
-
-        <!-- 計算 -->
-        <input type="text" id="num1">
-
-        <br>
-
-        結果：<span id="result">0</span>
-
-        <div>
+            <!-- チンチロ -->
             <h2>
-                今日の運勢
+                チンチロ
             </h2>
-            <button id="omikuji_button">
-                おみくじを引く
+            <input type="text" id="chinchiro_bet" placeholder="賭けるポイント数">
+            <button id="chinchiro_button">
+                サイコロを振る
             </button>
-            <button id ="reset_daikyo_button" style="display: none;">見た目を元に戻す
+            <div id="chinchiro_result">
+                ここにサイコロの結果が出るよ
+            </div>
+            <div id="chinchiro_point_change">
+                変動pt：なし
+            </div>
+
+            <!-- 1D100 -->
+            <h2>
+                なんでも1D100
+            </h2>
+            <input type="text" id="dice_input" placeholder="例: 1d100, 1d6+3">
+            <button id="1d100_button">
+                ダイスを振る
             </button>
-            <p>
-                結果：<span id ="omikuji_result">???</span>
-            </p>
-            合計<span id="user_points">0</span>pt
-        </div>
+            <span id="1d100_result">
+            </span>
 
-        <!-- チンチロ -->
-        <h2>
-            チンチロ
-        </h2>
-        <input type="text" id="chinchiro_bet" placeholder="賭けるポイント数">
-        <button id="chinchiro_button">
-            サイコロを振る
-        </button>
-        <div id="chinchiro_result">
-            ここにサイコロの結果が出るよ
-        </div>
-        <div id="chinchiro_point_change">
-            変動pt：なし
-        </div>
+            <br>
 
-        <!-- 1D100 -->
-        <h2>
-            なんでも1D100
-        </h2>
-        <input type="text" id="dice_input" placeholder="例: 1d100, 1d6+3">
-        <button id="1d100_button">
-            ダイスを振る
-        </button>
-        <span id="1d100_result">
-        </span>
-
-        <button id="next_button">
-            次のページ
-        </button>
+            <div class="navigation_button">
+                <button id="next_button">
+                    次のページ
+                </button>
+            </div>
+        </main>
 
         <!-- フッター -->
         <div id="footer-container">

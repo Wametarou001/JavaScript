@@ -1,47 +1,102 @@
 @charset "utf-8";
 
+/* フォント */
 @font-face
 {
     font-family: "mihiPixel";
     src: url("mihiPixelmoji_v1.1.ttf") format("truetype");
 }
 
+/* ボディ */
 body
 {
     margin: 0;
     padding: 0;
-    color: #ffffff;
+    color: #fff;
     background-color: #202020;
 }
 
+/* ヘッダー */
 header
 {
+    padding: 1rem;
     font-family: "mihiPixel";
     display: flex;
     flex-direction: column;
-    color: #ffffff;
-    background-color: #000000;
+    color: #fff;
+    background-color: #000;
 }
 
+/* ナビゲーション */
 nav
 {
     display: flex;
+    justify-content: flex-end;
 }
 
+/* メイン */
+main
+{
+    padding: 1rem;
+}
+
+/* フッター */
+footer
+{
+    padding: 1rem;
+    border-top: 1px solid #c0c0c0;
+    color: #c0c0c0;
+}
+
+/* サイト名 */
 .site_name
 {
     color: inherit;
     text-decoration: none;
 }
 
+/* イエロー */
+.yellow
+{
+    color: #ff0;
+}
+
+/* マゼンタ */
+.magenta
+{
+    color: #f0f;
+}
+
+/* シアン */
+.cyan
+{
+    color: #0ff;
+}
+
+/* 垢アイコン */
+.account
+{
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* 移動ボタン */
+.navigation_button
+{
+    display: flex;
+    justify-content: flex-end;
+}
+
 /* 大凶 */
 body.daikyo
 {
-    background-color: #ff0000;
+    background-color: #f00;
     filter: invert(1);
 }
 
-/* 大凶の見た目をリセット */
+/* 赤画面リセット */
 body.resetDaikyo
 {
     background-color: #202020;

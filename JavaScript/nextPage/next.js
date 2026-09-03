@@ -1,3 +1,4 @@
+
 const mainPageButton = document.getElementById('main_button');
 
 mainPageButton.addEventListener

@@ -1,9 +1,24 @@
+<!DOCTYPE html>
+
 <header>
     <a href="" class="site_name" data-link="home">
         <h1>
-            良いね悪いねサイト
+            <span class="yellow">良</span>いね<span class="magenta">悪</span>いね<span class="cyan">サ</span>イト
         </h1>
     </a>
+
+    <div class="account" id="user_auth_area">
+        <button id="google_login_button" onclick="loginWithGoogle()" style="display: none; cursor: pointer;">
+        Googleでログイン
+        </button>
+    </div>
+
+    <div id="user_profile" style="display: none;">
+        <img class="account" id="user_icon" src="" alt="アイコン" style="width: 32px; height: 32px; border-radius: 50%;">
+        <span id="user_name">
+        </span>
+    </div>
+
     <nav>
         <a href="" data-link="home">
             <button style="width: 40px; height: 40px; border-radius: 8px; padding: 0;">
