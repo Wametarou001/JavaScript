@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js"; // FireBaseの基本機能
-import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js"; // ログイン機能
+import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js"; // ログイン機能
 
 // Firebaseの設定情報(いじらないで)
 const firebaseConfig =
