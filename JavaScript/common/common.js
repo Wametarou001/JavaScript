@@ -2,7 +2,6 @@ document.addEventListener
 (
     'DOMContentLoaded', () =>
     {
-        // ★ ルート階層から見た components フォルダを指定する
         const basePath = './components/';
 
         // ヘッダーの読み込み

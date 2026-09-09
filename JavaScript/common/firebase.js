@@ -37,7 +37,7 @@ export function loginWithGoogle()
         {
             const user = result.user;
 
-            console.log("ログイン成功:", user.displayName, user.email);
+            console.log("ログイン成功:", user.displayName);
             alert("Googleでログインしました。");
         }
     )
