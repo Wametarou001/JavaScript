@@ -1,6 +1,4 @@
-import { db, auth } from "../common/firebase.js";
-import { ref, get, update } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-database.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
+import { modifyBalance, getAllBalances } from '../common/wallet.js';
 
 const chinchiroButton = document.getElementById("chinchiro_button");
 const chinchiroResult = document.getElementById("chinchiro_result");
@@ -8,64 +6,13 @@ const chinchiroPointChange = document.getElementById("chinchiro_point_change");
 const chinchiroBetInput = document.getElementById("chinchiro_bet");
 const pointDisplay = document.getElementById("user_points");
 
-let currentUserUid = null;
-
-// ログイン状態を監視してUIDを保持する
-onAuthStateChanged(auth, async (user) =>
-{
-    if (user)
-    {
-        currentUserUid = user.uid;
-        await updatePointDisplay();
-    }
-    else
-    {
-        currentUserUid = null;
-        updatePointDisplay();
-    }
-});
-
-// 現在のポイントを取得する関数(ログインしていない場合LocalStrageを参照)
-async function getCurrentPoints()
-{
-    if (currentUserUid)
-    {
-        const userRef = ref(db, "users/" + currentUserUid);
-        const snapshot = await get(userRef);
-        if (snapshot.exists())
-        {
-            return Number(snapshot.val().points) || 0;
-        }
-        return 0;
-    }
-    else
-    {
-        return Number(localStorage.getItem("user_points")) || 0;
-    }
-}
-
-// ポイントを保存する関数（FirebaseまたはlocalStorage）
-async function saveNewPoints(newPoints)
-{
-    if (currentUserUid)
-    {
-        const userRef = ref(db, "users/" + currentUserUid);
-        await update(userRef, {
-            points: newPoints
-        });
-    }
-    else
-    {
-        localStorage.setItem("user_points", newPoints);
-    }
-}
-
-// 画面のポイント表示を更新する関数
+// 画面のポイント（JPY残高）表示を更新する関数
 async function updatePointDisplay()
 {
     if (!pointDisplay) return;
-    const currentPoints = await getCurrentPoints();
-    pointDisplay.textContent = currentPoints;
+    const balances = await getAllBalances();
+    const currentJpy = Number(balances.JPY) || 0;
+    pointDisplay.textContent = currentJpy;
 }
 
 // 連続振りの状態を保持する変数
@@ -75,13 +22,17 @@ const maxRolls = 3;
 
 export function initChinChiro()
 {
+    // 初期表示の更新
+    updatePointDisplay();
+
     if (chinchiroButton)
     {
         chinchiroButton.addEventListener
         (
             "click", async () =>
             {
-                const currentPoints = await getCurrentPoints();
+                const balances = await getAllBalances();
+                const currentPoints = Number(balances.JPY) || 0;
 
                 // 新規ゲームの開始（または1回目が終わった後）の判定
                 if (currentRollCount === 0)
@@ -202,8 +153,7 @@ export function initChinChiro()
                 // ゲームが終了したときのみポイントを変動・保存する
                 if (isFinished)
                 {
-                    const newPoints = currentPoints + pointChange;
-                    await saveNewPoints(newPoints);
+                    await modifyBalance('JPY', pointChange);
                     await updatePointDisplay();
 
                     chinchiroResult.textContent = `サイコロ: [ ${rawdice.join(", ")} ] → ${resultText}`;

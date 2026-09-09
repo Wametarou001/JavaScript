@@ -1,0 +1,19 @@
+@charset "utf-8";
+
+/* イエロー */
+.yellow
+{
+    color: #ff0;
+}
+
+/* マゼンタ */
+.magenta
+{
+    color: #f0f;
+}
+
+/* シアン */
+.cyan
+{
+    color: #0ff;
+}

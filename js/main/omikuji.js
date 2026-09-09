@@ -1,9 +1,11 @@
+import { modifyBalance, getAllBalances } from '../common/wallet.js';
 import { db, auth } from "../common/firebase.js";
 import { ref, get, update } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-database.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
 
 const omikujiButton = document.getElementById("omikuji_button");
 const omikujiResult = document.getElementById("omikuji_result");
+const omikujiResultPts = document.getElementById("omikuji_result_pts");
 const pointDisplay = document.getElementById("user_points");
 const resetDaikyoButton = document.getElementById("reset_daikyo_button");
 
@@ -26,19 +28,17 @@ onAuthStateChanged(auth, async (user) =>
     if (user)
     {
         currentUserUid = user.uid;
-        // ログインしたらFirebaseからデータを読み込んで画面に反映
         await loadUserData();
     }
     else
     {
         currentUserUid = null;
-        // 未ログインならlocalStorageから読み込む
         updatePointDisplayLocal();
         checkLocalOmikujiState();
     }
 });
 
-// Firebaseからデータを読み込む関数
+// ユーザーデータ（おみくじ履歴とポイント）を読み込む関数
 async function loadUserData() {
     if (!currentUserUid) return;
 
@@ -48,14 +48,18 @@ async function loadUserData() {
     if (snapshot.exists()) {
         const data = snapshot.val();
         if (pointDisplay) {
-            pointDisplay.textContent = data.points || 0;
+            const balances = data.balances || {};
+            pointDisplay.textContent = Number(balances.JPY) || 0;
         }
 
         const todayStr = new Date().toISOString().split('T')[0];
         if (data.last_omikuji_date === todayStr && data.last_omikuji_result) {
-            omikujiResult.textContent = data.last_omikuji_result;
-            if (data.last_omikuji_result.includes("大凶")) {
-                applyDaikyo(data.last_omikuji_result, false); // ローカル保存はスキップ
+            const res = data.last_omikuji_result;
+            const pts = fortunePoints[res] !== undefined ? fortunePoints[res] : 0;
+            if (omikujiResult) omikujiResult.textContent = res;
+            if (omikujiResultPts) omikujiResultPts.textContent = `+${pts}pt`;
+            if (res.includes("大凶")) {
+                applyDaikyo(res, false);
             }
         }
     } else {
@@ -64,11 +68,11 @@ async function loadUserData() {
 }
 
 // ローカルのポイント表示を更新
-function updatePointDisplayLocal()
+async function updatePointDisplayLocal()
 {
     if (!pointDisplay) return;
-    const currentPoints = Number(localStorage.getItem("user_points")) || 0;
-    pointDisplay.textContent = currentPoints;
+    const balances = await getAllBalances();
+    pointDisplay.textContent = Number(balances.JPY) || 0;
 }
 
 // ローカルの今日の結果をチェック
@@ -80,7 +84,9 @@ function checkLocalOmikujiState()
 
     if (savedDate === todayStr && savedResult)
     {
-        omikujiResult.textContent = savedResult;
+        const pts = fortunePoints[savedResult] !== undefined ? fortunePoints[savedResult] : 0;
+        if (omikujiResult) omikujiResult.textContent = savedResult;
+        if (omikujiResultPts) omikujiResultPts.textContent = `+${pts}pt`;
         if (savedResult.includes("大凶"))
         {
             applyDaikyo(savedResult, true);
@@ -88,12 +94,17 @@ function checkLocalOmikujiState()
     }
 }
 
-// --- 大凶で反転を適用するメソッド ---
+// --- 大凶の反転を適用するメソッド ---
 export function applyDaikyo(resultText, saveToLocal = true)
 {
+    const pts = fortunePoints[resultText] !== undefined ? fortunePoints[resultText] : 0;
     if (omikujiResult)
     {
         omikujiResult.textContent = resultText;
+    }
+    if (omikujiResultPts)
+    {
+        omikujiResultPts.textContent = `+${pts}pt`;
     }
     document.documentElement.classList.remove("resetDaikyo");
     document.body.classList.remove("resetDaikyo");
@@ -142,49 +153,40 @@ export function initOmikuji()
     omikujiButton.addEventListener("click", async () =>
     {
         const today = new Date().toISOString().split('T')[0];
+
+        // 1日1回制限のチェック（ログイン中・未ログイン共通）
+        if (currentUserUid) {
+            const userRef = ref(db, "users/" + currentUserUid);
+            const snapshot = await get(userRef);
+            const userData = snapshot.exists() ? snapshot.val() : {};
+            if (userData.last_omikuji_date === today) {
+                alert("おみくじは一日一回まで！また明日引いてね！");
+                return;
+            }
+        } else {
+            const lastDrawnDate = localStorage.getItem("last_omikuji_date");
+            if (lastDrawnDate === today) {
+                alert("おみくじは一日一回まで！また明日引いてね！");
+                return;
+            }
+        }
+
         const fortunes = Object.keys(fortunePoints);
         const randomIndex = Math.floor(Math.random() * fortunes.length);
         const result = fortunes[randomIndex];
         const earnedPoints = fortunePoints[result];
 
-        let newPoints = 0;
+        // wallet.jsの共通関数を使ってJPY（ポイント）を増やす
+        const newPoints = await modifyBalance('JPY', earnedPoints);
 
-        // ログインしている場合：Firebaseに保存
-        if (currentUserUid)
-        {
+        // どの日付におみくじを引いたかの記録を保存
+        if (currentUserUid) {
             const userRef = ref(db, "users/" + currentUserUid);
-            const snapshot = await get(userRef);
-            const userData = snapshot.exists() ? snapshot.val() : {};
-
-            if (userData.last_omikuji_date === today)
-            {
-                alert("おみくじは一日一回まで！また明日引いてね！");
-                return;
-            }
-
-            const currentPoints = Number(userData.points) || 0;
-            newPoints = currentPoints + earnedPoints;
-
-            // 既存データを保持しておみくじ結果だけ更新
             await update(userRef, {
-                points: newPoints,
                 last_omikuji_date: today,
                 last_omikuji_result: result
             });
-        }
-        // 未ログインの場合：localStorageに保存
-        else
-        {
-            const lastDrawnDate = localStorage.getItem("last_omikuji_date");
-            if (lastDrawnDate === today)
-            {
-                alert("おみくじは一日一回まで！また明日引いてね！");
-                return;
-            }
-
-            const currentPoints = Number(localStorage.getItem("user_points")) || 0;
-            newPoints = currentPoints + earnedPoints;
-            localStorage.setItem("user_points", newPoints);
+        } else {
             localStorage.setItem("last_omikuji_date", today);
             localStorage.setItem("last_omikuji_result", result);
         }
@@ -194,13 +196,16 @@ export function initOmikuji()
             pointDisplay.textContent = newPoints;
         }
 
+        // 結果とポイントをそれぞれの要素にセット
+        if (omikujiResult) omikujiResult.textContent = result;
+        if (omikujiResultPts) omikujiResultPts.textContent = `+${earnedPoints}pt`;
+
         if (result.includes("大凶"))
         {
             applyDaikyo(result, !currentUserUid);
         }
         else
         {
-            omikujiResult.textContent = result;
             document.documentElement.classList.remove("daikyo");
             document.body.classList.remove("daikyo");
             document.documentElement.classList.add("resetDaikyo");
@@ -210,7 +215,5 @@ export function initOmikuji()
                 resetDaikyoButton.style.display = "none";
             }
         }
-
-        alert(`${result} +${earnedPoints}pt （合計: ${newPoints}pt）`);
     });
 }

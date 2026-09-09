@@ -1,18 +1,23 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
-import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
+import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
 import { getDatabase, ref, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-database.js";
 
-import { initOmikuji, applyDaikyo } from './omikuji.js';
-import { initRollDice } from './rollDice.js';
-import { initChinChiro } from './chinchiro.js';
-import { loginWithGoogle } from '../common/firebase.js';
-import { initDebug } from "../common/debug.js";
+import { initOmikuji, applyDaikyo } from '/js/main/omikuji.js';
+import { initRollDice } from '/js/main/rollDice.js';
+import { initChinChiro } from '/js/main/chinchiro.js';
+import { loginWithGoogle } from '/js/common/firebase.js';
+import { initDebug } from "/js/common/debug.js";
+import { initCurrentExchange } from "/js/main/exchange.js";
+import { updateWalletDisplay } from "/js/common/wallet.js";
 
 // 読み込み完了時に機能を有効化
 document.addEventListener("DOMContentLoaded", () => {
     initOmikuji();
     initRollDice();
     initChinChiro();
+    initCurrentExchange();
+
+    updateWalletDisplay();
 });
 
 // Firebaseの設定情報
@@ -30,6 +35,11 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
+
+// ウォレットを最新にする
+onAuthStateChanged(auth, (user) => {
+    updateWalletDisplay();
+});
 
 // Googleログインボタン
 const loginButton = document.getElementById("google_login_button");
@@ -93,11 +103,25 @@ onValue(ref(db, "counts/waruine"), (snapshot) => {
     calculate();
 });
 
+// ---合計訪問数---
+runTransaction(ref(db, "counts/total_visits"), (current) => (current || 0) + 1);
+
+onValue(ref(db, "counts/total_visits"), (snapshot) => {
+    totalVisitDisplay.textContent = snapshot.val() || 0;
+    calculate();
+});
+
+const nextPageButton = document.getElementById('next_button');
+if (nextPageButton) {
+    nextPageButton.addEventListener('click', () => {
+        window.location.href = './next.html';
+    });
+}
+
 // 「良いね！」ボタンの処理
 if (iine_button) {
     iine_button.addEventListener("click", () => {
         alert("良いね！");
-        // ▼ transaction -> runTransaction に変更
         runTransaction(ref(db, "counts/iine"), (current) => (current || 0) + 1);
     });
 }
@@ -105,7 +129,6 @@ if (iine_button) {
 // 「悪いね！」ボタンの処理
 if (waruine_button) {
     waruine_button.addEventListener("click", () => {
-        // ▼ transaction -> runTransaction に変更
         runTransaction(ref(db, "counts/waruine"), (current) => (current || 0) + 1);
 
         const daikyoProbability = 0.1;
@@ -120,22 +143,6 @@ if (waruine_button) {
 
 if (num1Input) {
     num1Input.addEventListener("input", calculate);
-}
-
-// ---合計訪問数---
-// ▼ transaction -> runTransaction に変更
-runTransaction(ref(db, "counts/total_visits"), (current) => (current || 0) + 1);
-
-onValue(ref(db, "counts/total_visits"), (snapshot) => {
-    totalVisitDisplay.textContent = snapshot.val() || 0;
-    calculate();
-});
-
-const nextPageButton = document.getElementById('next_button');
-if (nextPageButton) {
-    nextPageButton.addEventListener('click', () => {
-        window.location.href = './next.html';
-    });
 }
 
 initDebug(auth);

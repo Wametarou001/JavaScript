@@ -15,7 +15,7 @@
         </script>
 
         <!-- css -->
-        <link rel="stylesheet" href="/css/style.css">
+        <link rel="stylesheet" href="/css/css.css">
 
         <!-- js -->
         <script src="/js/common/common.js">
@@ -24,7 +24,6 @@
         </script>
         <script type="module" src="/js/main/main.js">
         </script>
-
         <title>
             良いね悪いねサイト
         </title>
@@ -46,7 +45,7 @@
 
         <main>
             <div>
-                延べ訪問数：<span id="total_visit_count">0</span>回
+                延べ訪問数：<span id="total_visit_count">0</span>
             </div>
 
             <br>
@@ -91,14 +90,16 @@
                 <button id="omikuji_button">
                     おみくじを引く
                 </button>
-                <button id ="reset_daikyo_button" style="display: none;">
+                <button id="reset_daikyo_button" style="display: none;">
                     見た目を元に戻す
                 </button>
                 <p>
-                    結果：<span id ="omikuji_result">???</span>
+                    結果：<span id="omikuji_result">???</span>
                 </p>
-                合計<span id="user_points">0</span>pt
-            </div>
+                <p>
+                <span id="omikuji_result_pts"></span>
+                </p>
+</div>
 
             <!-- チンチロ -->
             <h2>
@@ -125,6 +126,53 @@
             </button>
             <span id="1d100_result">
             </span>
+
+            <!-- 為替レート -->
+            <h2>
+                為替レート
+            </h2>
+            <div class="exchange_container">
+                <div class="exchange_row">
+                    <select id="from_currency" class="currency_select">
+                        <option value="JPY" selected>JPY （日本円）</option>
+                        <option value="USD">USD （米ドル）</option>
+                    </select>
+
+                    <input type="number" id="exchange_amount" class="amount_input" placeholder="換金する額を入力">
+                </div>
+
+                <div class="arrow_down">
+                    ↓
+                </div>
+
+                <div class="exchange_row">
+                    <select id="to_currency" class="currency_select">
+                        <option value="JPY">JPY （日本円）</option>
+                        <option value="USD" selected>USD （米ドル）</option>
+                    </select>
+
+                    <div class="result_box">
+                        <span id="result_unit">$</span><span id="result_amount">0.00</span>
+                    </div>
+
+                    <button id="exchange_button" class="exchange_button">
+                        変換
+                    </button>
+                </div>
+            </div>
+
+            <!-- ウォレット残高一覧 -->
+            <div class="wallet_summary_container">
+                <h3>
+                    所持金一覧
+                </h3>
+                <p>
+                    JPY：¥<span id="wallet_jpy">0</span>
+                </p>
+                <p>
+                    USD：$<span id="wallet_usd">0</span>
+                </p>
+            </div>
 
             <br>
 

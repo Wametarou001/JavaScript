@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <title>
+            馬鹿
+        </title>
+
+        <style>
+            body {
+                margin: 0;
+                background: black;
+            }
+
+            video {
+                width: 100vw;
+                height: 100vh;
+                object-fit: cover
+            }
+        </style>
+    </head>
+    <body>
+
+        <video id="movie">
+            <source src="/mp4/you are an idiot!.mp4" type="video/mp4">
+        </video>
+
+        <script>
+            const movie = document.getElementById("movie");
+
+            document.addEventListener
+            ("click", () =>
+                {
+                    movie.style.display = "block";
+                    movie.play();
+                }, { once: true }
+            );
+        </script>
+    </body>
+</html>
