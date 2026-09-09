@@ -1,4 +1,4 @@
-import { db, auth } from "../common/firebase.js";
+import { db, auth } from "/js/common/firebase.js";
 import { ref, get, update, set } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-database.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
 
@@ -18,7 +18,8 @@ if (mainPageButton)
 // シリアルコードの定義
 const serialCodes =
 {
-    "超良いね！": 1000,
+    // シリアルコード一覧
+    // "超良いね！": 1000,
 };
 
 let currentUserUid = null;

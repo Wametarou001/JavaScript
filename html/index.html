@@ -13,14 +13,16 @@
         </script>
         <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js">
         </script>
-        <link rel="stylesheet" href="./style.css">
 
-        <script src="JavaScript/common/common.js">
-        </script>
-        <script type="module" src="./JavaScript/common/firebase.js">
-        </script>
+        <!-- css -->
+        <link rel="stylesheet" href="/css/style.css">
 
-        <script type="module" src="JavaScript/main/main.js">
+        <!-- js -->
+        <script src="/js/common/common.js">
+        </script>
+        <script type="module" src="/js/common/firebase.js">
+        </script>
+        <script type="module" src="/js/main/main.js">
         </script>
 
         <title>
@@ -28,6 +30,7 @@
         </title>
 
         <!-- Open Graph Protocol-->
+        <!-- ページのタイトル名 -->
         <meta property="og:title" content="良いね悪いねサイト"/>
         <meta property="og:description" content="良いか悪いかを決めるサイトです。"/>
         <meta property="og:url" content="https://iine-waruine-site.pages.dev/"/>
@@ -88,7 +91,8 @@
                 <button id="omikuji_button">
                     おみくじを引く
                 </button>
-                <button id ="reset_daikyo_button" style="display: none;">見た目を元に戻す
+                <button id ="reset_daikyo_button" style="display: none;">
+                    見た目を元に戻す
                 </button>
                 <p>
                     結果：<span id ="omikuji_result">???</span>
