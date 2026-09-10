@@ -1,7 +1,7 @@
 document.addEventListener(
     'DOMContentLoaded', () =>
     {
-        const basePath = '/components/';
+        const basePath = '/html/components/';
 
         // ヘッダーの読み込み
         fetch(basePath + 'header.html')
