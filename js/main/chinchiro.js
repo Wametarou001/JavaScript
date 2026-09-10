@@ -1,19 +1,9 @@
-import { modifyBalance, getAllBalances } from '../common/wallet.js';
+import { modifyBalance, getAllBalances, updateWalletDisplay } from '../common/wallet.js';
 
 const chinchiroButton = document.getElementById("chinchiro_button");
 const chinchiroResult = document.getElementById("chinchiro_result");
 const chinchiroPointChange = document.getElementById("chinchiro_point_change");
 const chinchiroBetInput = document.getElementById("chinchiro_bet");
-const pointDisplay = document.getElementById("user_points");
-
-// 画面のポイント（JPY残高）表示を更新する関数
-async function updatePointDisplay()
-{
-    if (!pointDisplay) return;
-    const balances = await getAllBalances();
-    const currentJpy = Number(balances.JPY) || 0;
-    pointDisplay.textContent = currentJpy;
-}
 
 // 連続振りの状態を保持する変数
 let currentBetAmount = 0;
@@ -22,8 +12,8 @@ const maxRolls = 3;
 
 export function initChinChiro()
 {
-    // 初期表示の更新
-    updatePointDisplay();
+    // 初期表示の更新（wallet.js側の共通関数を利用）
+    updateWalletDisplay();
 
     if (chinchiroButton)
     {
@@ -154,7 +144,7 @@ export function initChinChiro()
                 if (isFinished)
                 {
                     await modifyBalance('JPY', pointChange);
-                    await updatePointDisplay();
+                    await updateWalletDisplay();
 
                     chinchiroResult.textContent = `サイコロ: [ ${rawdice.join(", ")} ] → ${resultText}`;
 
