@@ -1,5 +1,4 @@
-document.addEventListener
-(
+document.addEventListener(
     'DOMContentLoaded', () =>
     {
         const basePath = '/components/';
@@ -27,9 +26,10 @@ document.addEventListener
                     const nextLinks = headerContainer.querySelectorAll('[data-link="next"]');
                     const bakaLinks = headerContainer.querySelectorAll('[data-link="baka"]');
 
-                    homeLinks.forEach(el => el.setAttribute('href', '/html/index.html'));
-                    nextLinks.forEach(el => el.setAttribute('href', '/html/next.html'));
-                    bakaLinks.forEach(el => el.setAttribute('href', '/html/baka.html'));
+                    // ▼ ここを /html/ を抜いたパスに修正
+                    homeLinks.forEach(el => el.setAttribute('href', '/index.html'));
+                    nextLinks.forEach(el => el.setAttribute('href', '/next.html'));
+                    bakaLinks.forEach(el => el.setAttribute('href', '/baka.html'));
                 }
             }
         )
