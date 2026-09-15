@@ -1,0 +1,41 @@
+/* テーブル全体 */
+.component-table {
+    width: 100%;
+    border-collapse: collapse; /* セルの隙間をなくす */
+    border: 1px solid #ccc;    /* 外枠 */
+}
+
+/* ヘッダーとセル */
+.component-table th,
+.component-table td {
+    border: 1px solid #ccc;    /* 罫線 */
+    padding: 4px 8px;          /* 余白 */
+    text-align: left;
+}
+
+/* ヘッダーの背景色 */
+.component-table th {
+    background-color: #f5f5f5;
+}
+
+/* 入力欄 */
+.component-table .col-input,
+.component-table .cell-input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: inherit;
+    padding: 4px 0;
+}
+
+/* 入力欄にフォーカスしたときの見た目 */
+.component-table .col-input:focus,
+.component-table .cell-input:focus {
+    background-color: #fff;
+}
+
+.component-table .col-action {
+    text-align: center;
+    width: 50px;
+}

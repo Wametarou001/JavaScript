@@ -68,6 +68,7 @@ onAuthStateChanged(auth, (user) =>
         }
         if (userProfile && userIcon && userName)
         {
+            // ログインしている時だけ安全に代入
             userIcon.src = user.photoURL || "";
             userName.textContent = user.displayName;
             userProfile.style.display = "flex"; // プロフィールを表示する
@@ -83,6 +84,11 @@ onAuthStateChanged(auth, (user) =>
         if (googleLoginButton)
         {
             googleLoginButton.style.display = "block";
+        }
+        if (userIcon)
+        {
+            // ログアウト時はsrc属性を削除して警告を防ぐ
+            userIcon.removeAttribute("src");
         }
     }
 });

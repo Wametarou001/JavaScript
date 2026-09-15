@@ -114,7 +114,7 @@ onValue(ref(db, "counts/total_visits"), (snapshot) => {
 const nextPageButton = document.getElementById('next_button');
 if (nextPageButton) {
     nextPageButton.addEventListener('click', () => {
-        window.location.href = './next.html';
+        window.location.href = '/html/next.html';
     });
 }
 

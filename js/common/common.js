@@ -26,7 +26,7 @@ document.addEventListener(
                     const nextLinks = headerContainer.querySelectorAll('[data-link="next"]');
                     const bakaLinks = headerContainer.querySelectorAll('[data-link="baka"]');
 
-                    homeLinks.forEach(el => el.setAttribute('href', '/html/index.html'));
+                    homeLinks.forEach(el => el.setAttribute('href', '/index.html'));
                     nextLinks.forEach(el => el.setAttribute('href', '/html/next.html'));
                     bakaLinks.forEach(el => el.setAttribute('href', '/html/baka.html'));
                 }

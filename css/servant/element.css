@@ -1,0 +1,72 @@
+@charset "utf-8";
+
+/* フォント */
+@font-face
+{
+    font-family: "mihiPixel";
+    src: url("/ttf/mihiPixelmoji_v1.1.ttf") format("truetype");
+}
+
+body
+{
+    margin: 0;
+    padding: 0;
+    color: #fff;
+    background-color: #202020;
+}
+
+.element_header
+{
+    padding: 1rem;
+    font-family: "mihiPixel";
+    display: flex;
+    align-items: center;
+    gap: 50px;
+    color: #fff;
+    background-color: #000;
+    flex-direction: row;
+}
+
+.element_back_button
+{
+    display: inline-flex;
+    text-decoration: none;
+    color: #eeeaea; /* 「戻る」の文字の色 */
+    padding: 8px 12px;
+    border: 1px solid #ccc; /* 戻るボタン縁 */
+    border-radius: 4px;
+    background-color: #3f3f3f; /* 戻るボタン背景 */
+    margin-top: 4px;
+    white-space: nowrap;
+}
+
+.select_item_button
+{
+    margin: 5px;
+    padding: 8px 12px;
+    cursor: pointer;
+    background-color: #333;
+    color: #fff;
+    border: 1px solid #555;
+    border-radius: 4px;
+}
+
+.select_item_button:hover
+{
+    background-color: #444;
+}
+
+/* 検索欄の幅*/
+#component_search_input {
+    width: 100%;
+    max-width: 300px;
+    padding: 6px 10px;
+}
+
+/* パーツごとの外枠共通スタイル */
+.editor-item {
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #ccc;
+    background: #fff;
+}

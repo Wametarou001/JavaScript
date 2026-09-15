@@ -3,6 +3,7 @@ import { ref, get, update, set } from "https://www.gstatic.com/firebasejs/11.0.0
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
 
 const mainPageButton = document.getElementById('main_button');
+const nanikoreButton = document.getElementById('nanikore_button');
 
 if (mainPageButton)
 {
@@ -14,6 +15,11 @@ if (mainPageButton)
         }
     );
 }
+
+nanikoreButton.addEventListener('click', () =>
+{
+    window.location.href = '/html/nanikore.html';
+});
 
 // シリアルコードの定義
 const serialCodes =

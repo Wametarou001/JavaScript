@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/css/css.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>キャラクターシート作成</title>
+</head>
+    <body>
+        <!-- ヘッダー -->
+        <header class="element_header">
+            <a href="/index.html" class="element_back_button">戻る</a>
+            <h1 class="element_title">キャラクターシート作成</h1>
+        </header>
+
+        <main class ="character_sheet_main">
+            <div class="character_editior_container">
+                <!-- エディター内容 -->
+                <div class="toolbar">
+                    <button class="add_button" id="add_text_button">+ 追加</button>
+                </div>
+
+                <!-- 選択メニュー -->
+                <div id="component_selector" style="display: none; border: 1px solid #444; padding: 15px; margin-bottom: 20px; background: #222; color: #fff;">
+                    <h3>パーツ一覧</h3>
+
+                    <!-- 検索用入力欄-->
+                    <div style="margin-bottom: 10px;">
+                        <input type="text" id="component_search_input" placeholder="検索..." style="width: 100%; padding: 5px">
+                    </div>
+
+                    <div id="component_list_container">
+                        <!-- .jsでここを自動生成させる -->
+                    </div>
+                </div>
+
+                <div id="canvas">
+                    <p style="color: #888;">パーツ追加欄</p>
+                </div>
+            </div>
+
+            <script type="module" src="/js/trpg/element/CharacterSheet.js"></script>
+        </main>
+    </body>
+</html>
