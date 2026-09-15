@@ -15,7 +15,8 @@ body
 
 #crazy_box
 {
-    width: 700px;
+    width: 100%;
+    max-width: 700px;
     min-height: 450px;
     background-color: #ffdfc4;
     border-radius: 15px;
